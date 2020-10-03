@@ -27,25 +27,21 @@ class Bot {
     walk(speed) {
       this.x += speed * this.dx;
       this.y += speed * this.dy;
-      if (this.x > this.maxw) this.x = this.maxw;
-      if (this.x < 0) this.x = 0;
-      if (this.y > this.maxh) this.y = this.maxh;
-      if (this.y < 0) this.y = 0;
+      if (this.x > this.maxw-5) this.x = this.maxw-5;
+      if (this.x < 5) this.x = 5;
+      if (this.y > this.maxh-5) this.y = this.maxh-5;
+      if (this.y < 5) this.y = 5;
     }
   
     show2d(p) {
-      p.stroke(255,20)
-      p.strokeWeight(3);
-      let cx;
-      let cy;
+      p.stroke(0,0,80,0.2);
+      p.strokeWeight(2);
       for(let r of this.rays) {
-        p.line(r.bx, r.by, r.wx, r.wy);
-        cx = r.bx;
-        cy = r.by;
+        p.line(this.x, this.y, r.wallx, r.wally);
       }
       p.stroke(255);
       p.strokeWeight(1);
-      p.ellipse(cx||this.x,cy||this.y,10,10);
+      p.ellipse(this.x,this.y,10,10);
     }
 
     show3d(p) {
@@ -56,13 +52,12 @@ class Bot {
       let step = this.maxw / this.rays.length;
 
       for(let r of this.rays) {
-        let dist = Math.sqrt(r.dist);
-        dist = 1 + (dist * this.cos(r.vang-r.pang));
-        let len = (50 * this.maxh/dist);
-        if (len > this.maxh) len = this.maxh;
+        let dist = r.walld;
+        dist = dist * this.cos(r.off);
+        let len = 10*this.maxh/dist;
         let top = ((this.maxh - len)/2);
-        p.fill(p.map(len,0,this.maxh,10,200))
-        p.rect(xind, top, 5, len);
+        p.fill(r.hue,100,p.map(len,10,this.maxh,30,100));
+        p.rect(xind, top, 3, len);
         xind += step;
       }
     }
@@ -70,7 +65,7 @@ class Bot {
     calc(walls) {
       this.rays = [];
       // loop through rays in field of view
-      for(let i=0; i<this.v; i+=0.5) {
+      for(let i=0; i<this.v; i+=0.25) {
         let ang = this.d + i - (this.v/2);
         let x3 = this.x;
         let y3 = this.y;
@@ -79,8 +74,9 @@ class Bot {
         let wd = Infinity;
         let wx = null;
         let wy = null;
+        let wh = null;
         let good = null;
-        //loop through walls
+        // loop through walls
         for(let wall of walls) {
           let hit = this.ray(wall.x1,wall.y1,wall.x2,wall.y2,x3,y3,x4,y4);
           if (hit) {
@@ -89,12 +85,13 @@ class Bot {
               wd = dist;
               wx = hit[0];
               wy = hit[1];
+              wh = wall.hue;
               good = 1;
             }
           }
         }
         if (good) {
-          this.rays.push({bx:this.x, by:this.y, wx: wx, wy: wy, dist: wd, pang: this.d, vang: ang})
+          this.rays.push({wallx: wx, wally: wy, walld: Math.sqrt(wd), off: (this.d-ang), hue: wh})
         }
       }
     }
