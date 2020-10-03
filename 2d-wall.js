@@ -9,6 +9,7 @@ class Wall {
   
     show(p) {
       p.stroke(255);
+      p.strokeWeight(1);
       p.line(this.x1, this.y1, this.x2, this.y2);
     }
 }

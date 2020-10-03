@@ -1,12 +1,13 @@
+let bot;
+
 
 let sketch2d = function(p) {
   let wide = 600;
   let high = 600;
 
-  let bot;
   let ang = 0; 
-  let view = 100;
-  let speed = 4;
+  let view = 60;
+  let speed = 2;
   let walls = [];
 
   p.setup = function() {
@@ -27,14 +28,14 @@ let sketch2d = function(p) {
   }
 
   p.draw = function() {
+    bot.calc(walls);
+
     p.background(0);
 
     for(let wall of walls) {
       wall.show(p);
     }
-    bot.show(p);
-    bot.look(p,walls);
-
+    bot.show2d(p);
 
     if (p.keyIsDown(p.LEFT_ARROW)) {  
       bot.turn(-speed);
@@ -52,4 +53,27 @@ let sketch2d = function(p) {
   }
 }
 
-let myp5 = new p5(sketch2d);
+let sketch3d = function(p) {
+  let wide = 600;
+  let high = 600;
+
+  p.setup = function() {
+    p.createCanvas(wide, high);
+  }
+
+  p.draw = function() {
+    p.background(127);
+
+    p.fill(0,0,80);
+    p.rect(0, 0, wide, high/2);
+    p.fill(0,80,0);
+    p.rect(0, high/2, wide, high/2);
+
+    bot.show3d(p);
+
+  }
+}
+
+let sk2d = new p5(sketch2d);
+let sk3d = new p5(sketch3d);
+
