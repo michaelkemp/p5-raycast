@@ -7,8 +7,8 @@ class Wall {
         this.y2 = y2;
     }
   
-    show() {
-      stroke(255);
-      line(this.x1, this.y1, this.x2, this.y2);
+    show(p) {
+      p.stroke(255);
+      p.line(this.x1, this.y1, this.x2, this.y2);
     }
 }
