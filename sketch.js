@@ -1,6 +1,7 @@
 let bot;
 let wide = 600;
 let high = 600;
+let hall = 40;
 
 let sketch2d = function(p) {
   let ang = 0; 
@@ -17,9 +18,9 @@ let sketch2d = function(p) {
     walls.push(new Wall(wide, high, 0, high, 90));
     walls.push(new Wall(0, high, 0, 0, 270));
 
-    maze(0,wide,0,high,40,"H");
+    maze(0,wide,0,high,hall,"H");
 
-    bot = new Bot(20,20,ang,view, wide, high);
+    bot = new Bot(hall/2,hall/2,ang,view, wide, high);
   }
 
   p.draw = function() {
