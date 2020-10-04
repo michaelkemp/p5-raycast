@@ -27,15 +27,14 @@ class Bot {
     walk(speed,walls) {
       let nx = this.x + (speed * this.dx);
       let ny = this.y + (speed * this.dy);
-      let collide = false;
+      let cx = false;
+      let cy = false;
       for(let wall of walls) {
-        let d = wall.toPoint(nx,ny);
-        if (d<5) collide = true; 
+        if (wall.toPoint(nx,this.y)<5) cx = true;
+        if (wall.toPoint(this.x,ny)<5) cy = true;
       }
-      if (!collide) {
-        this.x = nx;
-        this.y = ny;
-      }
+      if (!cx) this.x = nx;
+      if (!cy)  this.y = ny;
     }
   
     show2d(p) {
