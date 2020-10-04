@@ -24,13 +24,18 @@ class Bot {
       this.dy = this.sin(this.d);
     }
 
-    walk(speed) {
-      this.x += speed * this.dx;
-      this.y += speed * this.dy;
-      if (this.x > this.maxw-5) this.x = this.maxw-5;
-      if (this.x < 5) this.x = 5;
-      if (this.y > this.maxh-5) this.y = this.maxh-5;
-      if (this.y < 5) this.y = 5;
+    walk(speed,walls) {
+      let nx = this.x + (speed * this.dx);
+      let ny = this.y + (speed * this.dy);
+      let collide = false;
+      for(let wall of walls) {
+        let d = wall.toPoint(nx,ny);
+        if (d<5) collide = true; 
+      }
+      if (!collide) {
+        this.x = nx;
+        this.y = ny;
+      }
     }
   
     show2d(p) {

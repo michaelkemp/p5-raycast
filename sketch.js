@@ -11,6 +11,7 @@ let sketch2d = function(p) {
   p.setup = function() {
     p.createCanvas(wide, high);
     p.colorMode(p.HSB, 360, 100, 100, 1);
+
     walls.push(new Wall(0, 0, wide, 0, 90));
     walls.push(new Wall(wide, 0, wide, high, 270));
     walls.push(new Wall(wide, high, 0, high, 90));
@@ -38,10 +39,10 @@ let sketch2d = function(p) {
       bot.turn(speed);
     } 
     if (p.keyIsDown(p.UP_ARROW)) { 
-        bot.walk(speed)
+        bot.walk(speed,walls)
     } 
     if (p.keyIsDown(p.DOWN_ARROW)) { 
-        bot.walk(-speed)
+        bot.walk(-speed,walls)
     } 
 
   }
