@@ -11,20 +11,14 @@ let sketch2d = function(p) {
   p.setup = function() {
     p.createCanvas(wide, high);
     p.colorMode(p.HSB, 360, 100, 100, 1);
-    for(let i=0; i<6; ++i) {
-      let x1 = p.random(wide);
-      let y1 = p.random(high);
-      let x2 = p.random(wide);
-      let y2 = p.random(high);
-      let hue = p.round(p.random(360));
-      walls.push(new Wall(x1,y1,x2,y2,hue));
-    }
-    walls.push(new Wall(0, 0, wide, 0, 0));
-    walls.push(new Wall(wide, 0, wide, high, 90));
-    walls.push(new Wall(wide, high, 0, high, 180));
+    walls.push(new Wall(0, 0, wide, 0, 90));
+    walls.push(new Wall(wide, 0, wide, high, 270));
+    walls.push(new Wall(wide, high, 0, high, 90));
     walls.push(new Wall(0, high, 0, 0, 270));
 
-    bot = new Bot(wide/2,high/2,ang,view, wide, high);
+    maze(0,wide,0,high,40,"H");
+
+    bot = new Bot(20,20,ang,view, wide, high);
   }
 
   p.draw = function() {
@@ -51,6 +45,48 @@ let sketch2d = function(p) {
     } 
 
   }
+  
+  // recursive maze algorithm
+  function maze(left,right,top,bottom,size,dir) {
+    let tmp;
+    if (dir == "H") { // horizontal wall
+      if ((bottom - top) <= size) { return; }
+
+      tmp = Math.floor((bottom - top)/size) - 1;
+      let wy = top + (size * (Math.floor(Math.random() * tmp) + 1));
+
+      tmp = Math.floor((right - left)/size);
+      let gap = left + (size * (Math.floor(Math.random() * tmp) + 1)); 
+      let gapl = gap - size;
+      let gapr = gap;
+
+      if (gapl > left) walls.push(new Wall(left, wy, gapl, wy, 0));
+      if (right > gapr) walls.push(new Wall(gapr, wy, right, wy, 0));
+      
+      maze(left,right,top,wy,size,"V");
+      maze(left,right,wy,bottom,size,"V")
+
+    } else { // vertical wall 
+      if ((right - left) <= size) { return; }
+
+      let tmp = Math.floor((right - left)/size) - 1;
+      let wx = left + (size * (Math.floor(Math.random() * tmp) + 1));
+
+      tmp = Math.floor((bottom - top)/size);
+      let gap = top + (size * (Math.floor(Math.random() * tmp) + 1)); 
+      let gapt = gap - size;
+      let gapb = gap;
+
+      if (gapt > top) walls.push(new Wall(wx, top, wx, gapt, 180));
+      if (bottom > gapb)  walls.push(new Wall(wx, gapb, wx, bottom, 180));
+      
+      maze(left,wx,top,bottom,size,"H")
+      maze(wx,right,top,bottom,size,"H")
+
+    }
+
+  }
+
 }
 
 let sketch3d = function(p) {

@@ -56,7 +56,7 @@ class Bot {
         dist = dist * this.cos(r.off);
         let len = 10*this.maxh/dist;
         let top = ((this.maxh - len)/2);
-        p.fill(r.hue,100,p.map(len,10,this.maxh,30,100));
+        p.fill(r.hue,100,p.map(len,10,this.maxh*2,30,100));
         p.rect(xind, top, 3, len);
         xind += step;
       }
