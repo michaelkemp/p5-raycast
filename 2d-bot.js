@@ -8,6 +8,7 @@ class Bot {
       this.v = v;
       this.maxw = maxw;
       this.maxh = maxh;
+      this.maxl = Math.sqrt((maxw*maxw) + (maxh*maxh))
       this.rays = [];
     }
 
@@ -29,19 +30,20 @@ class Bot {
       let ny = this.y + (speed * this.dy);
       let cx = false;
       let cy = false;
+      let close = Math.abs(speed);
       for(let wall of walls) {
-        if (wall.toPoint(nx,this.y)<5) cx = true;
-        if (wall.toPoint(this.x,ny)<5) cy = true;
+        if (wall.toPoint(nx,this.y)<close) cx = true;
+        if (wall.toPoint(this.x,ny)<close) cy = true;
       }
       if (!cx) this.x = nx;
-      if (!cy)  this.y = ny;
+      if (!cy) this.y = ny;
     }
   
     show2d(p) {
       p.stroke(0,0,80,0.2);
       p.strokeWeight(2);
       for(let r of this.rays) {
-        p.line(this.x, this.y, r.wallx, r.wally);
+          p.line(this.x, this.y, r.wallx, r.wally);
       }
       p.stroke(255);
       p.strokeWeight(1);
@@ -57,7 +59,6 @@ class Bot {
 
       for(let r of this.rays) {
         let dist = r.walld;
-        dist = dist * this.cos(r.off);
         let len = 10*this.maxh/dist;
         let top = ((this.maxh - len)/2);
         p.fill(r.hue,100,p.map(len,10,this.maxh*2,30,100));
@@ -76,27 +77,23 @@ class Bot {
         let x4 = this.x + this.cos(ang);
         let y4 = this.y + this.sin(ang);
         let wd = Infinity;
-        let wx = null;
-        let wy = null;
-        let wh = null;
-        let good = null;
+        let wx = this.x + (this.maxl * this.cos(ang));
+        let wy = this.y + (this.maxl * this.sin(ang));
+        let wh = 0;
         // loop through walls
         for(let wall of walls) {
           let hit = this.ray(wall.x1,wall.y1,wall.x2,wall.y2,x3,y3,x4,y4);
           if (hit) {
-            let dist = ((hit[0]-x3)*(hit[0]-x3)) + ((hit[1]-y3)*(hit[1]-y3));
+            let dist = Math.sqrt(((hit[0]-x3)*(hit[0]-x3)) + ((hit[1]-y3)*(hit[1]-y3)));
             if (dist < wd) {
-              wd = dist;
+              wd = dist * this.cos(this.d - ang);
               wx = hit[0];
               wy = hit[1];
               wh = wall.hue;
-              good = 1;
             }
           }
         }
-        if (good) {
-          this.rays.push({wallx: wx, wally: wy, walld: Math.sqrt(wd), off: (this.d-ang), hue: wh})
-        }
+        this.rays.push({wallx: wx, wally: wy, walld: wd, hue: wh})
       }
     }
 
